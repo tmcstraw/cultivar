@@ -1,5 +1,7 @@
 from tethys_sdk.base import TethysAppBase, url_map_maker
 from tethys_sdk.app_settings import SpatialDatasetServiceSetting
+from tethys_sdk.app_settings import PersistentStoreDatabaseSetting
+
 
 
 class Cultivar(TethysAppBase):
@@ -40,9 +42,9 @@ class Cultivar(TethysAppBase):
                     controller='cultivar.controllers.map'
             ),
             UrlMap(
-                    name='testmap',
-                    url='cultivar/testmap',
-                    controller='cultivar.controllers.testmap'
+                    name='test',
+                    url='cultivar/test',
+                    controller='cultivar.controllers.test'
             ),
             UrlMap(
                     name='demand-calculator',
@@ -59,7 +61,21 @@ class Cultivar(TethysAppBase):
                     url='cultivar/manage-districts',
                     controller='cultivar.controllers.manage_districts'
             ),
-
+            UrlMap(
+                    name='gistable',
+                    url='cultivar/gistable',
+                    controller='cultivar.controllers.gistable'
+            ),
+            UrlMap(
+                    name='update-persistent-store-parcel',
+                    url='cultivar/gistable/update-persistent-store-parcel',
+                    controller='cultivar.controllers.update_persistent_store_parcel'
+            ),
+            # UrlMap(
+            #         name='get-default-values',
+            #         url='cultivar/gistable/get-default-values',
+            #         controller='cultivar.controllers.get_default_values'
+            # ),
 
         )
 
@@ -80,3 +96,19 @@ class Cultivar(TethysAppBase):
         )
 
         return sds_settings
+
+
+    def persistent_store_settings(self):
+        """
+        Define Persistent Store Settings.
+        """
+        ps_settings = (
+            PersistentStoreDatabaseSetting(
+                name='primary_db',
+                description='primary database',
+                initializer='cultivar.model.init_primary_db',
+                required=True
+            ),
+        )
+
+        return ps_settings

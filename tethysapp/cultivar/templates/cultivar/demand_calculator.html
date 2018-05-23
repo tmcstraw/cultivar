@@ -7,58 +7,364 @@
   </div>
 {% endblock %}
 {% block app_navigation_items %}
-<h6>Region Name</h6>
 <br>
-{{% url 'cultivar:home' as home_url %}
-{% url 'cultivar:gis-data-manager' as gisdatamanager_url %}
+{% url 'cultivar:home' as home_url %}
 {% url 'cultivar:demand-calculator' as demandcalculator_url %}
-{% url 'cultivar:add-district' as adddistrict_url %}
-{% url 'cultivar:manage-districts' as managedistricts_url %}
+{% url 'cultivar:gis-data-manager' as gisdatamanager_url %}
+{% url 'cultivar:gistable' as gistable_url %}
 
-  <li class="{% if request.path == home_url %}active{% endif %}"><a href="{% url 'cultivar:home' %}">Select Irrigation District</a></li>
-  <li class="{% if request.path == gisdatamanager_url %}active{% endif %}"><a href="{% url 'cultivar:gis-data-manager' %}">GIS Data Management</a></li>
+  <li class="{% if request.path == home_url %}active{% endif %}"><a href="{% url 'cultivar:home' %}">Home</a></li>
   <li class="{% if request.path == demandcalculator_url %}active{% endif %}"><a href="{% url 'cultivar:demand-calculator' %}">Demand Calculator</a></li>
-  <li><a></a></li>
-  <li><a></a></li>
-  <li class="{% if request.path == adddistrict_url %}active{% endif %}"><a href="{% url 'cultivar:add-district' %}">Add District</a></li>
-  <li class="{% if request.path == managedistricts_url %}active{% endif %}"><a href="{% url 'cultivar:manage-districts' %}">Manage Districts</a></li>
+  <!--<li class="{% if request.path == gisdatamanager_url %}active{% endif %}"><a href="{% url 'cultivar:gis-data-manager' %}">GIS Data Management</a></li>-->
+  <li class="{% if request.path == gistable_url %}active{% endif %}"><a href="{% url 'cultivar:gistable' %}">GIS Datatable</a></li>
   <li class="separator"></li>
 
-  <li class="separator"></li>
-<p>Select a Day</p>
+{% gizmo select_district %}
+{% gizmo input_parameters_button %}
+<br>
+<!--<br>-->
+<!--<p>Select Display Layers</p>-->
+<!--<span id="rivers">-->
+    <!--<input type="checkbox" onclick="showHide(this)" id="rivers" checked> Irrigation_Canals-->
+  <!--</span>-->
+  <!--<br />-->
+  <!--<span id="parcel">-->
+    <!--<input type="checkbox" onclick="showHide(this)" id="parcel" checked> Parcel_Data-->
+  <!--</span>-->
 
-<br>
-<p>Select Display Layers</p>
-<br>
-<span id="layerToggle">
-    <input type="checkbox" id="canals" checked> Irrigation_Canals
-  </span>
-  <br />
-  <span id="layToggle">
-    <input type="checkbox" id="parcels" checked> Parcel_Data
-  </span>
-<br>
-<br>
 {% endblock %}
 {% block app_content %}
-  <h1>Select an Irrigation District</h1>
-  <p>Irrigation Districts of the Dominican Republic:</p>
-  {% gizmo select_input %}
-  {% gizmo select_district_button %}
-  <br />
-<br>
+<h1>Water Demand Calculator</h1>
+
 <div id="demandmap" class="map"></div>
 
 
 {% endblock %}
 
 {% block app_actions %}
-  {% gizmo add_district_button %}
 
 {% endblock %}
 
 {# Use the after_app_content block for modals #}
 {% block after_app_content %}
+  <form id="watermod" class="modal fade" role="dialog" >
+      <div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content">
+              <h5 align="center"><div id="district-name"></div>Irrigation District</h5><p align="center">Total area designated for farming = <div id="totarea" align="center"></div></p><p align="center">Tareas</p>
+              <div id="dimtable">
+                  {% gizmo select_crop_number %}
+
+
+
+                  <p style="color: #333; font-size: 14px;"><strong>Crop Growing Season</strong></p>
+                  {% for month in months %}
+                        <label for="{{ month }}"><font size="1">{{ month }}</font></label>
+                        <input name={{ month }} type="checkbox" value="{{ month }}" class="month">
+                  {% endfor %}
+                  <br><br>
+                  <h6><b><i><u>Crop 1:</u></i></b></h6>
+
+                  {% gizmo select_crop_type %}
+                  <div class="user-k-value hidden">
+                      <div class="col-md-6">
+                          {% gizmo text_input input_k_value %}
+                      </div>
+                      <div class="col-md-6">
+                          {% gizmo text_input input_crop_name %}
+                      </div>
+                  </div>
+
+                  <p><b>K Value: <div id="input-k"></div></b></p>
+
+
+                  <meta name="viewport" content="width=device-width, initial-scale=1">
+                  <style>
+                  .slidecontainer {
+                    width: 100%;
+                  }
+
+                  .slider {
+                    -webkit-appearance: none;
+                    width: 100%;
+                    height: 25px;
+                    background: #d3d3d3;
+                    outline: none;
+                    opacity: 0.7;
+                    -webkit-transition: .2s;
+                    transition: opacity .2s;
+                  }
+
+                  .slider:hover {
+                    opacity: 1;
+                  }
+
+                  .slider::-webkit-slider-thumb {
+                      -webkit-appearance: none;
+                      appearance: none;
+                      width: 25px;
+                      height: 25px;
+                      background: #4CAF50;
+                      cursor: pointer;
+                  }
+
+                  .slider::-moz-range-thumb {
+                      width: 25px;
+                      height: 25px;
+                      background: #4CAF50;
+                      cursor: pointer;
+                  }
+                  </style>
+                  {% gizmo area_seeded_1 %}
+
+                  <div class="crop2 hidden">
+                      <h6><b><i><u>Crop 2:</u></i></b></h6>
+                      {% gizmo select_crop_2_type %}
+                        <div class="user-k2-value hidden">
+                            <div class="col-md-6">
+                                {% gizmo text_input input_k_2_value %}
+                            </div>
+                            <div class="col-md-6">
+                                {% gizmo text_input input_crop_2_name %}
+                            </div>
+                        </div>
+
+                  <p><b>K Value: <div id="input-k2"></div></b></p>
+
+
+                  <meta name="viewport" content="width=device-width, initial-scale=1">
+                  <style>
+                  .slidecontainer {
+                    width: 100%;
+                  }
+
+                  .slider {
+                    -webkit-appearance: none;
+                    width: 100%;
+                    height: 25px;
+                    background: #d3d3d3;
+                    outline: none;
+                    opacity: 0.7;
+                    -webkit-transition: .2s;
+                    transition: opacity .2s;
+                  }
+
+                  .slider:hover {
+                    opacity: 1;
+                  }
+
+                  .slider::-webkit-slider-thumb {
+                      -webkit-appearance: none;
+                      appearance: none;
+                      width: 25px;
+                      height: 25px;
+                      background: #4CAF50;
+                      cursor: pointer;
+                  }
+
+                  .slider::-moz-range-thumb {
+                      width: 25px;
+                      height: 25px;
+                      background: #4CAF50;
+                      cursor: pointer;
+                  }
+                  </style>
+                  {% gizmo area_seeded_2 %}
+                  </div>
+
+                  <div class="crop3 hidden">
+                      <h6><b><i><u>Crop 3:</u></i></b></h6>
+                      {% gizmo select_crop_3_type %}
+                        <div class="user-k3-value hidden">
+                            <div class="col-md-6">
+                                {% gizmo text_input input_k_3_value %}
+                            </div>
+                            <div class="col-md-6">
+                                {% gizmo text_input input_crop_3_name %}
+                            </div>
+                        </div>
+
+                  <p><b>K Value: <div id="input-k3"></div></b></p>
+
+
+                  <meta name="viewport" content="width=device-width, initial-scale=1">
+                  <style>
+                  .slidecontainer {
+                    width: 100%;
+                  }
+
+                  .slider {
+                    -webkit-appearance: none;
+                    width: 100%;
+                    height: 25px;
+                    background: #d3d3d3;
+                    outline: none;
+                    opacity: 0.7;
+                    -webkit-transition: .2s;
+                    transition: opacity .2s;
+                  }
+
+                  .slider:hover {
+                    opacity: 1;
+                  }
+
+                  .slider::-webkit-slider-thumb {
+                      -webkit-appearance: none;
+                      appearance: none;
+                      width: 25px;
+                      height: 25px;
+                      background: #4CAF50;
+                      cursor: pointer;
+                  }
+
+                  .slider::-moz-range-thumb {
+                      width: 25px;
+                      height: 25px;
+                      background: #4CAF50;
+                      cursor: pointer;
+                  }
+                  </style>
+                  {% gizmo area_seeded_3 %}
+                  </div>
+
+                  <div class="crop4 hidden">
+                      <h6><b><i><u>Crop 4:</u></i></b></h6>
+                      {% gizmo select_crop_4_type %}
+                        <div class="user-k4-value hidden">
+                            <div class="col-md-6">
+                                {% gizmo text_input input_k_4_value %}
+                            </div>
+                            <div class="col-md-6">
+                                {% gizmo text_input input_crop_4_name %}
+                            </div>
+                        </div>
+
+                  <p><b>K Value: <div id="input-k4"></div></b></p>
+
+
+                  <meta name="viewport" content="width=device-width, initial-scale=1">
+                  <style>
+                  .slidecontainer {
+                    width: 100%;
+                  }
+
+                  .slider {
+                    -webkit-appearance: none;
+                    width: 100%;
+                    height: 25px;
+                    background: #d3d3d3;
+                    outline: none;
+                    opacity: 0.7;
+                    -webkit-transition: .2s;
+                    transition: opacity .2s;
+                  }
+
+                  .slider:hover {
+                    opacity: 1;
+                  }
+
+                  .slider::-webkit-slider-thumb {
+                      -webkit-appearance: none;
+                      appearance: none;
+                      width: 25px;
+                      height: 25px;
+                      background: #4CAF50;
+                      cursor: pointer;
+                  }
+
+                  .slider::-moz-range-thumb {
+                      width: 25px;
+                      height: 25px;
+                      background: #4CAF50;
+                      cursor: pointer;
+                  }
+                  </style>
+                  {% gizmo area_seeded_4 %}
+                  </div>
+
+
+
+              </div>
+
+              <div id="modalbut">
+                  {% gizmo calculate_button %}
+                  <br>
+              </div>
+          </div>
+         <!--End modal content-->
+      </div>
+  </form>
+
+  <!--Results Modal-->
+  <form id="resultmod" class="modal fade" role="dialog" >
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <h5 align="center"><b>Results for Demand of the Yaque del Sur District</b></h5>
+            <div id="dimtable">
+
+                <style>
+                table {
+                    font-family: arial, sans-serif;
+                    border-collapse: collapse;
+                    width: 100%;
+                }
+
+                td, th {
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                }
+
+                tr:nth-child(even) {
+                    background-color: #dddddd;
+                }
+                </style>
+
+                <table>
+                <tr>
+                    <th>Crop Type(Growth Stage)</th>
+                    <th>Area Seeded(tareas)</th>
+                    <th>Estimated Demand(m^3)</th>
+                </tr>
+                <tr>
+                    <td><span id="crop1-name"</td>
+                    <td><span id="crop1-area"</td>
+                    <td><span id="crop1-demand-result"></span></td>
+                </tr>
+                <tr>
+                    <td><span id="crop2-name"</td>
+                    <td><span id="crop2-area"</td>
+                    <td><span id="crop2-demand-result"></span></td>
+                </tr>
+                <tr>
+                    <td><span id="crop3-name"</td>
+                    <td><span id="crop3-area"</td>
+                    <td><span id="crop3-demand-result"></span></td>
+                </tr>
+                <tr>
+                    <td><span id="crop4-name"</td>
+                    <td><span id="crop4-area"</td>
+                    <td><span id="crop4-demand-result"></span></td>
+                </tr>
+                <tr>
+                    <td><span id="crop5-name"</td>
+                    <td><span id="crop5-area"</td>
+                    <td><span id="crop5-demand-result"></span></td>
+                </tr>
+
+                </table>
+            </div>
+
+            <div id="modalbut">
+                {% gizmo close_button %}
+                <br>
+            </div>
+        </div>
+        <!--End modal content-->
+    </div>
+    </form>
+
   <!-- Example Modal -->
   <div class="modal fade" id="help-modal" tabindex="-1" role="dialog" aria-labelledby="help-modal-label">
     <div class="modal-dialog" role="document">
@@ -82,7 +388,11 @@
 
 {% endblock %}
 
+
+
 {% block styles %}
     {{ block.super }}
+
     <link href="{% static 'cultivar/css/map.css' %}" rel="stylesheet"/>
 {% endblock %}
+

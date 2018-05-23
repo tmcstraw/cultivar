@@ -7,18 +7,34 @@
   </div>
 {% endblock %}
 
-{% block app_content %}
-  <h1>Yaque Del Sur Irrigation District</h1>
-  <p>Click on a Parcel to View its Associated Data</p>
-  {% gizmo select_input %}
-  <br />
-  <br />
+{% block app_navigation_items %}
+<br>
+{% url 'cultivar:home' as home_url %}
+{% url 'cultivar:demand-calculator' as demandcalculator_url %}
+{% url 'cultivar:gis-data-manager' as gisdatamanager_url %}
+{% url 'cultivar:gistable' as gistable_url %}
 
-  {% gizmo cultivar_map %}
+  <li class="{% if request.path == home_url %}active{% endif %}"><a href="{% url 'cultivar:home' %}">Home</a></li>
+  <li class="{% if request.path == demandcalculator_url %}active{% endif %}"><a href="{% url 'cultivar:demand-calculator' %}">Demand Calculator</a></li>
+  <!--<li class="{% if request.path == gisdatamanager_url %}active{% endif %}"><a href="{% url 'cultivar:gis-data-manager' %}">GIS Data Management</a></li>-->
+  <li class="{% if request.path == gistable_url %}active{% endif %}"><a href="{% url 'cultivar:gistable' %}">GIS Datatable</a></li>
+  <li class="separator"></li>
+
+{% gizmo select_district %}
+
+{% gizmo specify_lot %}
+{% gizmo update_button %}
+
+
+{% endblock %}
+
+{% block app_content %}
+  <h1>Yaque del Sur Parcel Data</h1>
+{% gizmo datatable_results %}
+
 {% endblock %}
 
 {% block app_actions %}
-
 {% endblock %}
 
 {# Use the after_app_content block for modals #}
@@ -44,4 +60,32 @@
     </div>
   </div>
 
+<!-- Update Modal -->
+<form id="update-modal" class="modal fade" role="dialog" >
+      <div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content">
+              <h5 align="center"><b>Update Lot Info <div id="object-id"</div></b></h5>
+              <div id="dimtable" style="margin:5%">
+                    {% gizmo specify_dueno %}
+                    {% gizmo specify_area %}
+                    {% gizmo specify_area_planted %}
+                    {% gizmo specify_crop_1 %}
+                    {% gizmo specify_area_crop_1 %}
+                    {% gizmo specify_crop_2 %}
+                    {% gizmo specify_area_crop_2 %}
+                    {% gizmo specify_crop_3 %}
+                    {% gizmo specify_area_crop_3 %}
+              </div>
+
+              <div id="modalbut" style="margin:5%" align="right">
+                  {% gizmo submit_changes_button %}
+                  <br>
+              </div>
+          </div>
+         <!--End modal content-->
+      </div>
+  </form>
+
 {% endblock %}
+

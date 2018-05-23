@@ -48,3 +48,13 @@
       .ol-popup-closer:after {
         content: "✖";
       }
+
+#dimtable {
+    padding-right: 10%;
+    padding-left: 10%;
+}
+
+#modalbut {
+    padding: 5%;
+    text-align:center;
+}

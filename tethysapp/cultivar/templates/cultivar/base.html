@@ -6,7 +6,7 @@
 
 {% block app_icon %}
   {# The path you provided in your app.py is accessible through the tethys_app.icon context variable #}
-  <img src="{% static tree.jpeg %}">
+  <img src="{% static tethys_app.icon %}">
 {% endblock %}
 
 {# The name you provided in your app.py is accessible through the tethys_app.name context variable #}
@@ -15,18 +15,19 @@
 {% block app_navigation_items %}
   <li class="title">App Navigation</li>
 {% url 'cultivar:home' as home_url %}
-{% url 'cultivar:gis-data-manager' as gisdatamanager_url %}
 {% url 'cultivar:demand-calculator' as demandcalculator_url %}
-{% url 'cultivar:add-district' as adddistrict_url %}
-{% url 'cultivar:manage-districts' as managedistricts_url %}
+{% url 'cultivar:gis-data-manager' as gisdatamanager_url %}
+{% url 'cultivar:gistable' as gistable_url %}
 
-  <li class="{% if request.path == home_url %}active{% endif %}"><a href="{% url 'cultivar:home' %}">Select Irrigation District</a></li>
-  <li class="{% if request.path == gisdatamanager_url %}active{% endif %}"><a href="{% url 'cultivar:gis-data-manager' %}">GIS Data Management</a></li>
+  <li class="{% if request.path == home_url %}active{% endif %}"><a href="{% url 'cultivar:home' %}">Home</a></li>
   <li class="{% if request.path == demandcalculator_url %}active{% endif %}"><a href="{% url 'cultivar:demand-calculator' %}">Demand Calculator</a></li>
-  <li><a></a></li>
-  <li><a></a></li>
-  <li class="{% if request.path == adddistrict_url %}active{% endif %}"><a href="{% url 'cultivar:add-district' %}">Add District</a></li>
-  <li class="{% if request.path == managedistricts_url %}active{% endif %}"><a href="{% url 'cultivar:manage-districts' %}">Manage Districts</a></li>
+  <!--<li class="{% if request.path == gisdatamanager_url %}active{% endif %}"><a href="{% url 'cultivar:gis-data-manager' %}">GIS Data Management</a></li>-->
+  <li class="{% if request.path == gistable_url %}active{% endif %}"><a href="{% url 'cultivar:gistable' %}">GIS Datatable</a></li>
+
+
+
+
+
   <li class="separator"></li>
 
   <li class="separator"></li>
